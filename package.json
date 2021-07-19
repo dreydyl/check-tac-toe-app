@@ -1,0 +1,24 @@
+{
+  "name": "check-tac-toe-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "cookie-parser": "^1.4.5",
+    "crypto": "^1.0.1",
+    "debug": "^4.3.2",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.2",
+    "express-session": "^1.17.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.12",
+    "sharp": "^0.28.3"
+  }
+}
