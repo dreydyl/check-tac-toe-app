@@ -2,14 +2,14 @@
   "name": "check-tac-toe-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "parcel check.html --open"
   },
   "keywords": [],
-  "author": "",
+  "author": "Devon Dy-Liacco",
   "license": "ISC",
   "dependencies": {
+    "boardgame.io": "^0.45.2",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.5",
     "crypto": "^1.0.1",
@@ -18,7 +18,10 @@
     "express-handlebars": "^5.3.2",
     "express-session": "^1.17.2",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.12",
     "sharp": "^0.28.3"
-  }
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  },
+  "browserslist": "defaults and supports async-functions"
 }
