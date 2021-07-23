@@ -19164,6 +19164,8 @@ function getStartArray() {
 
 function markValidMoves(G, ctx, clickedId) {
   //mark all spaces with active moves
+  let numMoves = 0;
+
   for (let i = 0; i < 40; i++) {
     G.cells[i].valid = false;
   }
@@ -19176,6 +19178,7 @@ function markValidMoves(G, ctx, clickedId) {
     if (onBoard(tempCoords)) {
       if (G.cells[toId(tempCoords)].player != ctx.currentPlayer && G.cells[toId(tempCoords)].player != -1) {
         G.cells[toId(tempCoords)].valid = true;
+        numMoves++;
       }
     }
 
@@ -19184,6 +19187,7 @@ function markValidMoves(G, ctx, clickedId) {
     if (onBoard(tempCoords)) {
       if (G.cells[toId(tempCoords)].player != ctx.currentPlayer && G.cells[toId(tempCoords)].player != -1) {
         G.cells[toId(tempCoords)].valid = true;
+        numMoves++;
       }
     }
 
@@ -19192,6 +19196,7 @@ function markValidMoves(G, ctx, clickedId) {
     if (onBoard(tempCoords)) {
       if (G.cells[toId(tempCoords)].player == -1) {
         G.cells[toId(tempCoords)].valid = true;
+        numMoves++;
       }
     }
 
@@ -19201,6 +19206,7 @@ function markValidMoves(G, ctx, clickedId) {
       if (onBoard(tempCoords)) {
         if (G.cells[toId(tempCoords)].player == -1) {
           G.cells[toId(tempCoords)].valid = true;
+          numMoves++;
         }
       }
     }
@@ -19220,6 +19226,7 @@ function markValidMoves(G, ctx, clickedId) {
           if (onBoard(tempCoords)) {
             if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
               G.cells[toId(tempCoords)].valid = true;
+              numMoves++;
             }
           }
         }
@@ -19243,6 +19250,7 @@ function markValidMoves(G, ctx, clickedId) {
           if (onBoard(tempCoords)) {
             if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
               G.cells[toId(tempCoords)].valid = true;
+              numMoves++;
             }
 
             if (G.cells[toId(tempCoords)].player != -1) {
@@ -19274,6 +19282,7 @@ function markValidMoves(G, ctx, clickedId) {
         if (onBoard(tempCoords)) {
           if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
             G.cells[toId(tempCoords)].valid = true;
+            numMoves++;
           }
 
           if (G.cells[toId(tempCoords)].player != -1) {
@@ -19293,6 +19302,7 @@ function markValidMoves(G, ctx, clickedId) {
         if (onBoard(tempCoords)) {
           if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
             G.cells[toId(tempCoords)].valid = true;
+            numMoves++;
           }
 
           if (G.cells[toId(tempCoords)].player != -1) {
@@ -19321,12 +19331,181 @@ function markValidMoves(G, ctx, clickedId) {
           if (onBoard(tempCoords)) {
             if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
               G.cells[toId(tempCoords)].valid = true;
+              numMoves++;
             }
           }
         }
       }
     }
   }
+
+  return numMoves;
+}
+
+function areValidMoves(G, ctx, clickedId) {
+  //mark all spaces with active moves
+  let coords = getCoordinates(clickedId);
+  let type = G.cells[clickedId].type;
+
+  if (type == "p" || type == "P") {
+    var tempCoords = offset(coords, -1, ctx.currentPlayer == 0 ? -1 : 1);
+
+    if (onBoard(tempCoords)) {
+      if (G.cells[toId(tempCoords)].player != ctx.currentPlayer && G.cells[toId(tempCoords)].player != -1) {
+        return true;
+      }
+    }
+
+    tempCoords = offset(coords, 1, ctx.currentPlayer == 0 ? -1 : 1);
+
+    if (onBoard(tempCoords)) {
+      if (G.cells[toId(tempCoords)].player != ctx.currentPlayer && G.cells[toId(tempCoords)].player != -1) {
+        return true;
+      }
+    }
+
+    tempCoords = offset(coords, 0, ctx.currentPlayer == 0 ? -1 : 1);
+
+    if (onBoard(tempCoords)) {
+      if (G.cells[toId(tempCoords)].player == -1) {
+        return true;
+      }
+    }
+
+    if (type == "P" && G.cells[toId(tempCoords)].valid) {
+      tempCoords = offset(coords, 0, ctx.currentPlayer == 0 ? -2 : 2);
+
+      if (onBoard(tempCoords)) {
+        if (G.cells[toId(tempCoords)].player == -1) {
+          return true;
+        }
+      }
+    }
+  }
+
+  if (type == "N") {
+    var tempCoords;
+
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        let dx = -2 + i;
+        let dy = -2 + j;
+
+        if (Math.abs(dx) != Math.abs(dy) && dx != 0 && dy != 0) {
+          tempCoords = offset(coords, dx, dy);
+
+          if (onBoard(tempCoords)) {
+            if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (type == "B" || type == "Q") {
+    let dx = -1;
+    let dy = -1;
+    var tempCoords;
+
+    for (let n = 0; n < 2; n++) {
+      for (let m = 0; m < 2; m++) {
+        tempCoords = coords;
+        let offBoard = false;
+
+        while (!offBoard) {
+          tempCoords = offset(tempCoords, dx, dy);
+
+          if (onBoard(tempCoords)) {
+            if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
+              return true;
+            }
+
+            if (G.cells[toId(tempCoords)].player != -1) {
+              offBoard = true;
+            }
+          } else {
+            offBoard = true;
+          }
+        }
+
+        dy = dy * -1;
+      }
+
+      dx = dx * -1;
+    }
+  }
+
+  if (type == "R" || type == "Q") {
+    let dx = -1;
+    var tempCoords;
+
+    for (let i = 0; i < 2; i++) {
+      tempCoords = coords;
+      let offBoard = false;
+
+      while (!offBoard) {
+        tempCoords = offset(tempCoords, dx, 0);
+
+        if (onBoard(tempCoords)) {
+          if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
+            return true;
+          }
+
+          if (G.cells[toId(tempCoords)].player != -1) {
+            offBoard = true;
+          }
+        } else {
+          offBoard = true;
+        }
+      }
+
+      tempCoords = coords;
+      offBoard = false;
+
+      while (!offBoard) {
+        tempCoords = offset(tempCoords, 0, dx);
+
+        if (onBoard(tempCoords)) {
+          if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
+            return true;
+          }
+
+          if (G.cells[toId(tempCoords)].player != -1) {
+            offBoard = true;
+          }
+        } else {
+          offBoard = true;
+        }
+      }
+
+      dx = dx * -1;
+    }
+  }
+
+  if (type == "K") {
+    var tempCoords;
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        let dx = -1 + i;
+        let dy = -1 + j;
+
+        if (dx != 0 | dy != 0) {
+          tempCoords = offset(coords, dx, dy);
+
+          if (onBoard(tempCoords)) {
+            if (G.cells[toId(tempCoords)].player != ctx.currentPlayer) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return false;
 }
 
 function resetValidMoves(G) {
@@ -19466,17 +19645,32 @@ const CheckTacToe = {
     enumerate: (G, ctx) => {
       let moves = [];
 
-      for (let i = 0; i < 40; i++) {
-        if (G.cells[i].player == ctx.currentPlayer) {
+      if (G.stage == "Promote your pawn") {
+        for (let i = 0; i < 4; i++) {
           moves.push({
-            move: 'clickCell',
+            move: 'choosePiece',
             args: [i]
           });
-        } else if (G.cells[i].valid) {
-          moves.push({
-            move: 'clickCell',
-            args: [i]
-          });
+        }
+      } else if (G.activePiece.id == -1) {
+        for (let i = 0; i < 40; i++) {
+          if (G.cells[i].player == ctx.currentPlayer) {
+            if (areValidMoves(G, ctx, i)) {
+              moves.push({
+                move: 'clickCell',
+                args: [i]
+              });
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < 40; i++) {
+          if (G.cells[i].valid) {
+            moves.push({
+              move: 'clickCell',
+              args: [i]
+            });
+          }
         }
       }
 
@@ -19618,7 +19812,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62898" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64098" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
