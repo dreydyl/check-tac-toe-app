@@ -1,11 +1,16 @@
 import { Client } from 'boardgame.io/client';
+import { Local } from 'boardgame.io/multiplayer';
 import { CheckTacToe } from './RealGame';
 
 class CheckTacToeClient {
-    constructor() {
-        this.client = Client({ game: CheckTacToe });
+    constructor(rootElement, { playerID } = {}) {
+        this.client = Client({
+            game: CheckTacToe,
+            multiplayer: Local(),
+            playerID,
+        });
         this.client.start();
-        this.rootElement = document.getElementById("app");
+        this.rootElement = rootElement;
         this.createBoard();
         this.attachListeners();
         this.client.subscribe(state => this.update(state));
@@ -15,10 +20,10 @@ class CheckTacToeClient {
         const rows = [];
         for (let i = 0; i < 10; i++) {
             const cells = [];
-            cells.push(`<td class="row">${10-(i+1)}</td>`);
+            cells.push(`<td class="row">${10 - i}</td>`);
             for (let j = 0; j < 4; j++) {
                 const id = 4 * i + j;
-                cells.push(`<td class="cell" data-id="${id}"></td>`);
+                cells.push(`<td class="cell ${id >= 12 && id < 28 ? " goal" : ""}" data-id="${id}"></td>`);
             }
             rows.push(`<tr>${cells.join('')}</tr>`);
         }
@@ -101,4 +106,9 @@ class CheckTacToeClient {
 }
 
 const appElement = document.getElementById('app');
-const app = new CheckTacToeClient(appElement);
+const playerIDs = ['0', '1'];
+const clients = playerIDs.map(playerID => {
+    const rootElement = document.createElement('div');
+    appElement.append(rootElement);
+    return new CheckTacToeClient(rootElement, { playerID });
+});
